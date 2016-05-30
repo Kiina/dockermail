@@ -52,6 +52,7 @@ Setup
     cp mail-base/aliases.example mail-base/aliases
     cp mail-base/domains.example mail-base/domains
     cp mail-base/passwords.example mail-base/passwords
+    cp dovecot/default.sieve.example dovecot/default.sieve
 
 2) Add all domains you want to receive mail for to the file `mail-base/domains`, like this:
 

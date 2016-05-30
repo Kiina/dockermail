@@ -10,6 +10,10 @@ RUN apt-get update                                  \
     postgrey      \
     # Install dovecot as IMAP server
     dovecot-imapd \
+    # Install sieve for mail filtering
+    dovecot-sieve      \
+    # Install sieve for mail filtering
+    dovecot-managesieved      \
     && rm -rf /var/lib/apt/lists/*
 
 # postfix configuration
@@ -17,6 +21,11 @@ RUN echo "mail.docker.container" > /etc/mailname
 ADD ./postfix.main.cf /etc/postfix/main.cf
 ADD ./postfix.master.cf.append /etc/postfix/master-additional.cf
 RUN cat /etc/postfix/master-additional.cf >> /etc/postfix/master.cf
+
+# sieve configuration
+ADD ./default.sieve /var/lib/dovecot/sieve/default.sieve
+RUN sievec /var/lib/dovecot/sieve/default.sieve
+ADD ./90-sieve.conf /etc/dovecot/conf.d/90-sieve.conf
 
 # configure mail delivery to dovecot
 #ADD ./aliases /etc/postfix/virtual
@@ -66,4 +75,3 @@ EXPOSE 587
 
 # start necessary services for operation (dovecot -F starts dovecot in the foreground to prevent container exit)
 ENTRYPOINT chown -R vmail:vmail /srv/vmail; service rsyslog start; service postgrey start; service postfix start; dovecot -F
-
